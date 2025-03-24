@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      background-color: #f4f4f4;
+    }
+    .logo {
+      max-width: 150px;
+      margin: 20px auto;
+      display: block;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      height: 100vh;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .sidebar input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .sidebar button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    .sidebar button:hover {
+      background-color: #0056b3;
+    }
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .client-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .client-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 200px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+    .client-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+    .client-card h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+    .remove-client {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .remove-client:hover {
+      color: red;
+      transform: scale(1.2);
+    }
+    .hidden {
+      display: none;
+    }
+    .lotes-area {
+      width: 100%;
+      max-width: 800px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .lotes-area h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .lotes-area form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .lotes-area input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .lotes-area button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .lotes-area button:hover {
+      background-color: #0056b3;
+    }
+    .lotes-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .lotes-table th, .lotes-table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    .lotes-table th {
+      background-color: #f2f2f2;
+    }
+    .edit-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .edit-button:hover {
+      background-color: #0056b3;
+    }
+    .edit-options {
+      position: absolute;
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+    .edit-options button {
+      display: block;
+      width: 100%;
+      margin: 5px 0;
+    }
+    .back-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .back-button:hover {
+      background-color: #5a6268;
+    }
+    .filter-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .filter-container input {
+      width: 120px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .filter-container button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    .filter-container button:hover {
+      background-color: #0056b3;
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+    .confirmation-modal, .edit-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      text-align: center;
+    }
+    .confirmation-modal button, .edit-modal button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .confirmation-modal button.confirm {
+      background-color: #dc3545;
+      color: white;
+    }
+    .confirmation-modal button.cancel {
+      background-color: #6c757d;
+      color: white;
+    }
+    .edit-modal input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .edit-modal button.confirm {
+      background-color: #007bff;
+      color: white;
+    }
+    .edit-modal button.cancel {
+      background-color: #6c757d;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu lateral -->
+  <div class="sidebar">
+    <img src="https://cavan.com.br/wp-content/uploads/2019/01/logotipo.jpg#24" alt="Logo Cavan" class="logo">
+    <h2>Menu</h2>
+    <div id="clientForm">
+      <input type="text" id="clientNameInput" placeholder="Nome do cliente" required>
+      <button onclick="saveClient()">Salvar Cliente</button>
+    </div>
+    <button id="backToDashboardButton" class="hidden" onclick="backToDashboard()">Voltar ao Início</button>
+    <!-- Botão de Carregamento de Dormentes -->
+    <button onclick="window.location.href = 'file:///C:/Users/luisf/OneDrive/%C3%81rea%20de%20Trabalho/CARREGAMENTO.html';">Carregamento de Dormentes</button>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="main-content">
+    <!-- Lista de clientes -->
+    <div class="client-list" id="clientList">
+      <!-- Clientes serão adicionados dinamicamente -->
+    </div>
+
+    <!-- Área de lotes (oculta inicialmente) -->
+    <div id="lotesArea" class="lotes-area hidden">
+      <h2 id="lotesTitle"></h2>
+      <form id="addLotForm">
+        <input type="number" id="lotNumber" placeholder="Número do lote" required>
+        <input type="number" id="lotQuantity" placeholder="Quantidade de dormentes" required>
+        <input type="date" id="lotDate" placeholder="Data" required>
+        <button type="submit">Adicionar Lote</button>
+      </form>
+      <div class="filter-container">
+        <input type="date" id="filterDate" placeholder="Data">
+        <button onclick="filterLotesByDate()">Pesquisar</button>
+      </div>
+      <table class="lotes-table" id="lotesTable">
+        <thead>
+          <tr>
+            <th>Número do Lote</th>
+            <th>Quantidade</th>
+            <th>Data</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Lotes serão adicionados dinamicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação para remover cliente -->
+  <div id="confirmationModal" class="confirmation-modal hidden">
+    <p>Deseja realmente excluir este cliente?</p>
+    <button class="confirm" onclick="confirmRemoveClient()">Continuar</button>
+    <button class="cancel" onclick="cancelRemoveClient()">Cancelar</button>
+  </div>
+
+  <!-- Modal de edição de lote -->
+  <div id="editModal" class="edit-modal hidden">
+    <p id="editModalMessage"></p>
+    <input type="text" id="editModalInput" placeholder="Novo valor">
+    <button class="confirm" onclick="confirmEditLot()">Salvar</button>
+    <button class="cancel" onclick="cancelEditLot()">Cancelar</button>
+  </div>
+
+  <script>
+    // Dados dos clientes e lotes (simulando um banco de dados)
+    let clients = JSON.parse(localStorage.getItem('clients')) || [];
+    let currentClientIndex = null; // Índice do cliente selecionado
+    let currentLotIndex = null; // Índice do lote selecionado para edição
+    let clientToRemoveIndex = null; // Índice do cliente a ser removido
+    let currentEditField = null; // Campo sendo editado (number, quantity, date)
+
+    // Função para renderizar a lista de clientes
+    function renderClientList() {
+      const clientList = document.getElementById('clientList');
+      clientList.innerHTML = ''; // Limpa a lista
+
+      clients.forEach((client, index) => {
+        const clientCard = document.createElement('div');
+        clientCard.className = 'client-card';
+        clientCard.innerHTML = `
+          <h3>${client.name}</h3>
+          <button class="remove-client" onclick="event.stopPropagation(); showConfirmationModal(${index})">✕</button>
+        `;
+        clientCard.onclick = () => showLotesArea(index); // Abre a área de lotes ao clicar no cliente
+        clientList.appendChild(clientCard);
+      });
+
+      // Salva os dados no localStorage
+      localStorage.setItem('clients', JSON.stringify(clients));
+    }
+
+    // Função para mostrar o modal de confirmação
+    function showConfirmationModal(index) {
+      clientToRemoveIndex = index;
+      document.getElementById('confirmationModal').classList.remove('hidden');
+    }
+
+    // Função para confirmar a remoção do cliente
+    function confirmRemoveClient() {
+      if (clientToRemoveIndex !== null) {
+        clients.splice(clientToRemoveIndex, 1);
+        renderClientList();
+        cancelRemoveClient();
+      }
+    }
+
+    // Função para cancelar a remoção do cliente
+    function cancelRemoveClient() {
+      document.getElementById('confirmationModal').classList.add('hidden');
+      clientToRemoveIndex = null;
+    }
+
+    // Função para salvar o cliente (adicionar ou editar)
+    function saveClient() {
+      const clientName = document.getElementById('clientNameInput').value.trim().toUpperCase(); // Converte para maiúsculas
+      if (clientName) {
+        // Verifica se o nome do cliente já existe
+        const clientExists = clients.some(client => client.name.toLowerCase() === clientName.toLowerCase());
+        if (clientExists) {
+          alert('Já existe um cliente com esse nome!');
+          return;
+        }
+
+        // Adicionar novo cliente
+        clients.push({ name: clientName, lots: [] });
+        renderClientList();
+        document.getElementById('clientNameInput').value = ''; // Limpa o campo
+      } else {
+        alert('Por favor, insira o nome do cliente.');
+      }
+    }
+
+    // Função para mostrar a área de lotes
+    function showLotesArea(index) {
+      currentClientIndex = index;
+      const client = clients[index];
+
+      // Atualiza o título da área de lotes
+      document.getElementById('lotesTitle').textContent = `Lotes de ${client.name}`;
+
+      // Renderiza a tabela de lotes
+      renderLotesTable();
+
+      // Oculta a lista de clientes e mostra a área de lotes
+      document.getElementById('clientList').classList.add('hidden');
+      document.getElementById('lotesArea').classList.remove('hidden');
+
+      // Esconde o formulário de cliente no menu lateral
+      document.getElementById('clientForm').classList.add('hidden');
+      // Mostra o botão "Voltar ao Início" no menu lateral
+      document.getElementById('backToDashboardButton').classList.remove('hidden');
+    }
+
+    // Função para voltar ao dashboard
+    function backToDashboard() {
+      document.getElementById('clientList').classList.remove('hidden');
+      document.getElementById('lotesArea').classList.add('hidden');
+      document.getElementById('clientForm').classList.remove('hidden');
+      document.getElementById('backToDashboardButton').classList.add('hidden');
+      renderClientList(); // Atualiza a lista de clientes
+    }
+
+    // Função para renderizar a tabela de lotes
+    function renderLotesTable(filteredLotes = null) {
+      const tbody = document.querySelector('#lotesTable tbody');
+      tbody.innerHTML = ''; // Limpa a tabela
+
+      const client = clients[currentClientIndex];
+      const lotesToRender = filteredLotes || client.lots;
+
+      lotesToRender.forEach((lot, index) => {
+        const row = document.createElement('tr');
+
+        // Número do lote
+        const lotNumberCell = document.createElement('td');
+        lotNumberCell.textContent = lot.number;
+        row.appendChild(lotNumberCell);
+
+        // Quantidade de dormentes
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = lot.quantity;
+        row.appendChild(quantityCell);
+
+        // Data (formato brasileiro)
+        const dateCell = document.createElement('td');
+        dateCell.textContent = formatDateToBR(lot.date);
+        row.appendChild(dateCell);
+
+        // Ações (botão de editar com subopções)
+        const actionsCell = document.createElement('td');
+        const editButton = document.createElement('button');
+        editButton.className = 'edit-button';
+        editButton.textContent = 'Editar';
+        editButton.onclick = (event) => showEditOptions(event, index);
+        actionsCell.appendChild(editButton);
+        row.appendChild(actionsCell);
+
+        tbody.appendChild(row);
+      });
+    }
+
+    // Função para mostrar as opções de edição
+    function showEditOptions(event, index) {
+      event.stopPropagation(); // Impede que o evento de clique se propague
+      currentLotIndex = index;
+
+      // Remove qualquer modal de edição existente
+      const existingModal = document.querySelector('.edit-options');
+      if (existingModal) existingModal.remove();
+
+      // Cria o modal de edição
+      const editOptions = document.createElement('div');
+      editOptions.className = 'edit-options';
+      editOptions.innerHTML = `
+        <button onclick="editLot('number')">Editar Número</button>
+        <button onclick="editLot('quantity')">Editar Quantidade</button>
+        <button onclick="editLot('date')">Editar Data</button>
+      `;
+
+      // Posiciona o modal ao lado do botão de editar
+      const buttonRect = event.target.getBoundingClientRect();
+      editOptions.style.position = 'absolute';
+      editOptions.style.top = `${buttonRect.bottom}px`;
+      editOptions.style.left = `${buttonRect.left}px`;
+
+      // Adiciona o modal ao corpo do documento
+      event.target.parentElement.appendChild(editOptions);
+
+      // Fecha o modal ao clicar fora dele
+      document.addEventListener('click', (e) => {
+        if (!editOptions.contains(e.target)) {
+          editOptions.remove();
+        }
+      }, { once: true });
+    }
+
+    // Função para editar um lote
+    function editLot(field) {
+      currentEditField = field;
+      const client = clients[currentClientIndex];
+      const lot = client.lots[currentLotIndex];
+
+      // Configura o modal de edição com base no campo selecionado
+      let message = '';
+      let placeholder = '';
+
+      switch (field) {
+        case 'number':
+          message = 'Editar Número do Lote';
+          placeholder = 'Novo número';
+          break;
+        case 'quantity':
+          message = 'Editar Quantidade de Dormentes';
+          placeholder = 'Nova quantidade';
+          break;
+        case 'date':
+          message = 'Editar Data do Lote';
+          placeholder = 'Nova data (dd/mm/aaaa)';
+          break;
+      }
+
+      // Atualiza o modal de edição
+      document.getElementById('editModalMessage').textContent = message;
+      document.getElementById('editModalInput').placeholder = placeholder;
+      document.getElementById('editModalInput').value = field === 'date' ? formatDateToBR(lot.date) : lot[field];
+
+      // Exibe o modal de edição
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+
+    // Função para confirmar a edição do lote
+    function confirmEditLot() {
+      const newValue = document.getElementById('editModalInput').value.trim();
+      if (newValue) {
+        const client = clients[currentClientIndex];
+        const lot = client.lots[currentLotIndex];
+
+        switch (currentEditField) {
+          case 'number':
+            lot.number = newValue;
+            break;
+          case 'quantity':
+            lot.quantity = newValue;
+            break;
+          case 'date':
+            lot.date = formatDateToISO(newValue);
+            break;
+        }
+
+        renderLotesTable();
+        cancelEditLot();
+      } else {
+        alert('Por favor, insira um valor válido.');
+      }
+    }
+
+    // Função para cancelar a edição do lote
+    function cancelEditLot() {
+      document.getElementById('editModal').classList.add('hidden');
+      document.getElementById('editModalInput').value = '';
+      currentEditField = null;
+    }
+
+    // Função para adicionar um lote
+    document.getElementById('addLotForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const lotNumber = document.getElementById('lotNumber').value.trim();
+      const lotQuantity = document.getElementById('lotQuantity').value.trim();
+      const lotDate = document.getElementById('lotDate').value;
+
+      if (lotNumber && lotQuantity && lotDate) {
+        const client = clients[currentClientIndex];
+        client.lots.push({ number: lotNumber, quantity: lotQuantity, date: lotDate });
+        renderLotesTable();
+        document.getElementById('lotNumber').value = ''; // Limpa o campo
+        document.getElementById('lotQuantity').value = ''; // Limpa o campo
+        document.getElementById('lotDate').value = ''; // Limpa o campo
+      } else {
+        alert('Por favor, preencha todos os campos.');
+      }
+    });
+
+    // Função para filtrar lotes por data
+    function filterLotesByDate() {
+      const filterValue = document.getElementById('filterDate').value;
+      const client = clients[currentClientIndex];
+      const filteredLotes = client.lots.filter(lot => lot.date.includes(filterValue));
+      renderLotesTable(filteredLotes);
+    }
+
+    // Função para formatar data para o padrão brasileiro (dd/mm/aaaa)
+    function formatDateToBR(date) {
+      const [year, month, day] = date.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    // Função para formatar data para o padrão ISO (aaaa-mm-dd)
+    function formatDateToISO(date) {
+      const [day, month, year] = date.split('/');
+      return `${year}-${month}-${day}`;
+    }
+
+    // Renderiza a lista de clientes ao carregar a página
+    renderClientList();
+  </script>
+</body>
+</html>

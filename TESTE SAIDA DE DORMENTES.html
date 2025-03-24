@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 20px; 
+      text-align: center; /* Centraliza o conteúdo */
+    }
+    form { 
+      max-width: 300px; 
+      margin: auto; 
+    }
+    input { 
+      width: 100%; 
+      padding: 10px; 
+      margin: 10px 0; 
+      border: 1px solid #ccc; 
+      border-radius: 5px; 
+    }
+    input.error {
+      border-color: red; /* Borda vermelha para campos com erro */
+    }
+    .logo {
+      max-width: 200px; /* Define o tamanho máximo da logo */
+      margin-bottom: 20px; /* Espaço abaixo da logo */
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #007bff; /* Cor de fundo azul */
+      color: white; /* Cor do texto */
+      border: none;
+      border-radius: 5px; /* Bordas arredondadas */
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para efeito 3D */
+      transition: all 0.3s ease; /* Suaviza as transições */
+    }
+    button:hover {
+      background-color: #0056b3; /* Cor de fundo mais escura ao passar o mouse */
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Aumenta a sombra para efeito 3D */
+      transform: translateY(-2px); /* Move o botão para cima */
+    }
+    button:active {
+      transform: translateY(0); /* Volta o botão à posição original ao clicar */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Reduz a sombra ao clicar */
+    }
+    .hidden {
+      display: none; /* Oculta elementos */
+    }
+    .requirements {
+      text-align: left;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+    .requirements ul {
+      padding-left: 20px;
+    }
+    .requirements li.valid {
+      color: green;
+    }
+    .requirements li.invalid {
+      color: red;
+    }
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo -->
+  <img src="https://cavan.com.br/wp-content/uploads/2019/01/logotipo.jpg#24" alt="Logo Cavan" class="logo">
+
+  <!-- Tela de Login -->
+  <div id="loginScreen">
+    <h1>Login</h1>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Nome de usuário" required>
+      <input type="password" id="password" placeholder="Senha" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <p class="error-message hidden" id="loginError">Login ou senha inválida</p>
+    <p>Não tem uma conta? <a href="#" id="createUserLink">Crie uma</a></p>
+  </div>
+
+  <!-- Tela de Criação de Usuário -->
+  <div id="createUserScreen" class="hidden">
+    <h2>Criar Usuário</h2>
+    <form id="newUserForm">
+      <input type="text" id="newUsername" placeholder="Nome de usuário" required>
+      <input type="password" id="newPassword" placeholder="Senha" required>
+      <div class="requirements">
+        <p>A senha deve:</p>
+        <ul>
+          <li id="lengthRequirement">Ter pelo menos 5 caracteres</li>
+          <li id="uppercaseRequirement">Conter pelo menos uma letra maiúscula</li>
+          <li id="specialCharRequirement">Conter pelo menos um caractere especial</li>
+        </ul>
+      </div>
+      <button type="submit">Criar</button>
+    </form>
+    <p><a href="#" id="backToLoginLink">Voltar para o login</a></p>
+  </div>
+
+  <script>
+    // Recupera os usuários do localStorage ou inicializa um array vazio
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Mostra a tela de criação de usuário ao clicar no link "Crie uma"
+    document.getElementById('createUserLink').addEventListener('click', (e) => {
+      e.preventDefault(); // Impede o comportamento padrão do link
+      document.getElementById('loginScreen').classList.add('hidden'); // Oculta a tela de login
+      document.getElementById('createUserScreen').classList.remove('hidden'); // Mostra a tela de criação
+    });
+
+    // Volta para a tela de login ao clicar no link "Voltar para o login"
+    document.getElementById('backToLoginLink').addEventListener('click', (e) => {
+      e.preventDefault(); // Impede o comportamento padrão do link
+      document.getElementById('createUserScreen').classList.add('hidden'); // Oculta a tela de criação
+      document.getElementById('loginScreen').classList.remove('hidden'); // Mostra a tela de login
+    });
+
+    // Valida o login
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username');
+      const password = document.getElementById('password');
+      const loginError = document.getElementById('loginError');
+
+      // Verifica se o usuário existe
+      const user = users.find(u => u.username === username.value && u.password === password.value);
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        // Redireciona para o arquivo local DASHBORD.HTML
+        window.location.href = 'file:///C:/Users/luisf/OneDrive/%C3%81rea%20de%20Trabalho/DASHBORD.HTML';
+      } else {
+        // Adiciona a classe de erro aos campos e exibe a mensagem de erro
+        username.classList.add('error');
+        password.classList.add('error');
+        loginError.classList.remove('hidden');
+      }
+    });
+
+    // Remove a classe de erro ao digitar nos campos
+    document.getElementById('username').addEventListener('input', () => {
+      document.getElementById('username').classList.remove('error');
+      document.getElementById('loginError').classList.add('hidden');
+    });
+    document.getElementById('password').addEventListener('input', () => {
+      document.getElementById('password').classList.remove('error');
+      document.getElementById('loginError').classList.add('hidden');
+    });
+
+    // Valida a senha ao digitar
+    document.getElementById('newPassword').addEventListener('input', () => {
+      const password = document.getElementById('newPassword').value;
+
+      // Verifica o comprimento da senha
+      const isLengthValid = password.length >= 5;
+      document.getElementById('lengthRequirement').classList.toggle('valid', isLengthValid);
+      document.getElementById('lengthRequirement').classList.toggle('invalid', !isLengthValid);
+
+      // Verifica se há pelo menos uma letra maiúscula
+      const hasUppercase = /[A-Z]/.test(password);
+      document.getElementById('uppercaseRequirement').classList.toggle('valid', hasUppercase);
+      document.getElementById('uppercaseRequirement').classList.toggle('invalid', !hasUppercase);
+
+      // Verifica se há pelo menos um caractere especial
+      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+      document.getElementById('specialCharRequirement').classList.toggle('valid', hasSpecialChar);
+      document.getElementById('specialCharRequirement').classList.toggle('invalid', !hasSpecialChar);
+    });
+
+    // Cria um novo usuário
+    document.getElementById('newUserForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('newUsername').value;
+      const password = document.getElementById('newPassword').value;
+
+      // Verifica se a senha atende aos requisitos
+      const isLengthValid = password.length >= 5;
+      const hasUppercase = /[A-Z]/.test(password);
+      const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+      if (!isLengthValid || !hasUppercase || !hasSpecialChar) {
+        alert('A senha não atende aos requisitos!');
+        return;
+      }
+
+      // Verifica se o usuário já existe
+      const userExists = users.some(u => u.username === username);
+      if (userExists) {
+        alert('Nome de usuário já existe! Escolha outro.');
+        return;
+      }
+
+      // Adiciona o novo usuário ao array
+      users.push({ username, password });
+      localStorage.setItem('users', JSON.stringify(users)); // Salva no localStorage
+      alert('Usuário criado com sucesso!');
+
+      // Volta para a tela de login após criar o usuário
+      document.getElementById('createUserScreen').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>

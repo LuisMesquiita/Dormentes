@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROMANEIO DE EMBARQUE</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif; /* Fonte moderna */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      background-color: #f4f4f4;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap'); /* Importando a fonte Poppins */
+    .sidebar {
+      width: 250px;
+      background-color: #2c3e50;
+      color: white;
+      height: 100vh;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar img {
+      max-width: 80%;
+      margin-bottom: 20px;
+    }
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .sidebar button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    .sidebar button:hover {
+      background-color: #0056b3;
+    }
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 1000px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 24px;
+      margin: 0;
+      font-weight: 600; /* Fonte mais grossa */
+    }
+    .header h2 {
+      font-size: 18px;
+      margin: 5px 0;
+      font-weight: 500; /* Fonte mais grossa */
+    }
+    .header p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    .form-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    .form-table th, .form-table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    .form-table th {
+      background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Degradê suave */
+      font-weight: 500; /* Fonte mais grossa */
+    }
+    .form-table input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .form-table input[type="text"] {
+      width: 100px; /* Tamanho reduzido para lote */
+    }
+    .form-table input[type="date"], .form-table input[type="time"] {
+      width: auto;
+    }
+    .form-table input.invalid {
+      border-color: red; /* Campo obrigatório não preenchido fica vermelho */
+    }
+    .cavidade-button {
+      padding: 5px;
+      background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Degradê suave */
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 20px; /* Tamanho reduzido para 1 caractere */
+      text-align: center;
+      display: inline-block;
+      margin: 2px;
+    }
+    .cavidade-button.selected {
+      background: linear-gradient(135deg, #007bff, #0056b3); /* Degradê azul */
+      color: white;
+    }
+    .footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .footer button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    .footer button:hover {
+      background-color: #0056b3;
+    }
+    .incluir-lote {
+      margin-top: 10px;
+      text-align: center;
+    }
+    /* Efeito 3D no botão "Incluir Novo Lote" */
+    .incluir-lote button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 4px #218838;
+      transition: all 0.3s ease;
+    }
+    .incluir-lote button:active {
+      box-shadow: 0 2px #218838;
+      transform: translateY(2px);
+    }
+    /* Centralização e alinhamento das cavidades */
+    .cavidades-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    /* Estilo para o número total de dormentes */
+    #totalDormentes {
+      font-weight: bold; /* Negrito */
+      font-size: 18px; /* Fonte aumentada */
+    }
+    /* Estilos para o modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .modal-content button {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px #0056b3;
+    }
+    .modal-content button:active {
+      box-shadow: 0 2px #0056b3;
+      transform: translateY(2px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu lateral -->
+  <div class="sidebar">
+    <img src="https://cavan.com.br/wp-content/uploads/2019/01/logotipo.jpg" alt="Logo Cavan">
+    <h2>Menu</h2>
+    <button onclick="window.location.href = 'file:///C:/Users/luisf/OneDrive/%C3%81rea%20de%20Trabalho/DASHBORD.HTML';">Voltar ao Início</button>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="main-content">
+    <div class="container">
+      <!-- Cabeçalho -->
+      <div class="header">
+        <h1>ROMANEIO DE EMBARQUE</h1>
+        <h2>FQA 014.19</h2>
+        <p>Rev. 04 - 2025-02-26 00:00:00</p>
+        <p>Pág. 1 de 1</p>
+      </div>
+
+      <!-- Formulário em formato de tabela -->
+      <table class="form-table">
+        <tr>
+          <th>PEDIDO:</th>
+          <th>NOTA FISCAL:</th>
+          <th>DATA:</th>
+          <th>PLACA DO CAVALO/VAGÃO:</th>
+        </tr>
+        <tr>
+          <td><input type="text" id="pedido" placeholder="Pedido"></td>
+          <td><input type="text" id="notaFiscal" placeholder="Nota Fiscal"></td>
+          <td><input type="date" id="data" required></td>
+          <td><input type="text" id="placaCavaloVagao" placeholder="Placa" required maxlength="7"></td>
+        </tr>
+        <tr>
+          <th>CLIENTE:</th>
+          <th>TIPO DORMENTE:</th>
+          <th>ROMANEIO:</th>
+          <th>HORÁRIO INÍCIO:</th>
+          <th>PLACA DA CARRETA:</th>
+        </tr>
+        <tr>
+          <td><input type="text" id="cliente" placeholder="Cliente"></td>
+          <td><input type="text" id="tipoDormente" placeholder="Tipo de Dormente"></td>
+          <td><input type="text" id="romaneio" placeholder="Romaneio"></td>
+          <td><input type="time" id="horarioInicio" required></td>
+          <td><input type="text" id="placaCarreta" placeholder="Placa" required maxlength="7"></td>
+        </tr>
+        <tr>
+          <th colspan="2">LOTE</th>
+          <th>MOLDE</th>
+          <th colspan="6">CAVIDADES</th>
+        </tr>
+        <!-- Linhas de lotes serão adicionadas dinamicamente aqui -->
+        <tbody id="lotesBody">
+          <!-- Primeiro lote -->
+          <tr class="loteRow">
+            <td colspan="2"><input type="text" class="lote" placeholder="Lote" maxlength="4" required></td>
+            <td><input type="text" class="molde" placeholder="Molde" required></td>
+            <td colspan="6" class="cavidades-container">
+              <div class="cavidade-button" onclick="selecionarCavidade(this, 1)">1</div>
+              <div class="cavidade-button" onclick="selecionarCavidade(this, 2)">2</div>
+              <div class="cavidade-button" onclick="selecionarCavidade(this, 3)">3</div>
+              <div class="cavidade-button" onclick="selecionarCavidade(this, 4)">4</div>
+              <div class="cavidade-button" onclick="selecionarCavidade(this, 5)">5</div>
+              <div class="cavidade-button" onclick="selecionarCavidade(this, 6)">6</div>
+            </td>
+          </tr>
+        </tbody>
+        <!-- Botão para incluir novo lote -->
+        <tr>
+          <td colspan="8" class="incluir-lote">
+            <button onclick="incluirNovoLote()">Incluir Novo Lote</button>
+          </td>
+        </tr>
+        <tr>
+          <th colspan="4">TOTAL DE DORMENTES:</th>
+          <th colspan="4">QUANTIDADE DE BARROTES UTILIZADOS:</th>
+        </tr>
+        <tr>
+          <td colspan="4"><input type="number" id="totalDormentes" placeholder="Total de Dormentes" readonly></td>
+          <td colspan="4"><input type="number" id="quantidadeBarrotes" placeholder="Quantidade de Barrotes"></td>
+        </tr>
+      </table>
+
+      <!-- Botão de confirmar carregamento -->
+      <div class="footer">
+        <button onclick="processarCarregamento()">Confirmar Carregamento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <p id="modalMessage"></p>
+      <button onclick="closeModal()">Confirmar</button>
+    </div>
+  </div>
+
+  <script>
+    let totalDormentes = 0;
+
+    // Função para selecionar/desselecionar cavidades
+    function selecionarCavidade(button, numero) {
+      if (button.classList.contains('selected')) {
+        button.classList.remove('selected');
+        totalDormentes -= 1;
+      } else {
+        button.classList.add('selected');
+        totalDormentes += 1;
+      }
+      document.getElementById('totalDormentes').value = totalDormentes;
+    }
+
+    // Função para incluir novo lote
+    function incluirNovoLote() {
+      const lotesBody = document.getElementById('lotesBody');
+      const newRow = document.createElement('tr');
+      newRow.className = 'loteRow';
+      newRow.innerHTML = `
+        <td colspan="2"><input type="text" class="lote" placeholder="Lote" maxlength="4" required></td>
+        <td><input type="text" class="molde" placeholder="Molde" required></td>
+        <td colspan="6" class="cavidades-container">
+          <div class="cavidade-button" onclick="selecionarCavidade(this, 1)">1</div>
+          <div class="cavidade-button" onclick="selecionarCavidade(this, 2)">2</div>
+          <div class="cavidade-button" onclick="selecionarCavidade(this, 3)">3</div>
+          <div class="cavidade-button" onclick="selecionarCavidade(this, 4)">4</div>
+          <div class="cavidade-button" onclick="selecionarCavidade(this, 5)">5</div>
+          <div class="cavidade-button" onclick="selecionarCavidade(this, 6)">6</div>
+        </td>
+      `;
+      lotesBody.appendChild(newRow);
+    }
+
+    // Função para abrir o modal
+    function openModal(message) {
+      document.getElementById('modalMessage').innerText = message;
+      document.getElementById('myModal').style.display = 'flex';
+    }
+
+    // Função para fechar o modal
+    function closeModal() {
+      document.getElementById('myModal').style.display = 'none';
+    }
+
+    // Função para validar placas
+    function validarPlaca(placa) {
+      return placa.length === 7;
+    }
+
+    // Função para validar todos os campos obrigatórios
+    function validarCampos() {
+      const camposObrigatorios = [
+        { id: 'data', value: document.getElementById('data').value.trim(), message: 'Data é obrigatória.' },
+        { id: 'placaCavaloVagao', value: document.getElementById('placaCavaloVagao').value.trim(), message: 'Placa do cavalo/vagão é obrigatória e deve ter exatamente 7 dígitos.' },
+        { id: 'horarioInicio', value: document.getElementById('horarioInicio').value.trim(), message: 'Horário de início é obrigatório.' },
+        { id: 'placaCarreta', value: document.getElementById('placaCarreta').value.trim(), message: 'Placa da carreta é obrigatória e deve ter exatamente 7 dígitos.' },
+      ];
+
+      // Verifica se todos os lotes e moldes estão preenchidos
+      const lotes = document.querySelectorAll('.lote');
+      const moldes = document.querySelectorAll('.molde');
+      for (let i = 0; i < lotes.length; i++) {
+        if (!lotes[i].value.trim()) {
+          openModal('Todos os campos de Lote são obrigatórios.');
+          return false;
+        }
+        if (!moldes[i].value.trim()) {
+          openModal('Todos os campos de Molde são obrigatórios.');
+          return false;
+        }
+      }
+
+      // Verifica os campos obrigatórios
+      for (const campo of camposObrigatorios) {
+        const input = document.getElementById(campo.id);
+        if (!campo.value) {
+          input.classList.add('invalid');
+          openModal(campo.message);
+          return false;
+        } else {
+          input.classList.remove('invalid');
+        }
+      }
+
+      // Valida as placas
+      if (!validarPlaca(document.getElementById('placaCavaloVagao').value.trim())) {
+        openModal('A placa do cavalo/vagão deve ter exatamente 7 dígitos.');
+        return false;
+      }
+      if (!validarPlaca(document.getElementById('placaCarreta').value.trim())) {
+        openModal('A placa da carreta deve ter exatamente 7 dígitos.');
+        return false;
+      }
+
+      return true;
+    }
+
+    // Função para processar o carregamento de dormentes
+    function processarCarregamento() {
+      if (!validarCampos()) {
+        return;
+      }
+
+      const cliente = document.getElementById('cliente').value.trim();
+      const tipoDormente = document.getElementById('tipoDormente').value.trim();
+      const pedido = document.getElementById('pedido').value.trim();
+      const notaFiscal = document.getElementById('notaFiscal').value.trim();
+      const data = document.getElementById('data').value.trim();
+      const placaCavaloVagao = document.getElementById('placaCavaloVagao').value.trim();
+      const romaneio = document.getElementById('romaneio').value.trim();
+      const horarioInicio = document.getElementById('horarioInicio').value.trim();
+      const placaCarreta = document.getElementById('placaCarreta').value.trim();
+      const quantidadeBarrotes = parseInt(document.getElementById('quantidadeBarrotes').value.trim());
+
+      // Exemplo de processamento (pode ser adaptado para salvar em localStorage ou enviar para um servidor)
+      const carregamento = {
+        cliente,
+        tipoDormente,
+        pedido,
+        notaFiscal,
+        data,
+        placaCavaloVagao,
+        romaneio,
+        horarioInicio,
+        placaCarreta,
+        totalDormentes,
+        quantidadeBarrotes
+      };
+
+      console.log('Carregamento registrado:', carregamento);
+      openModal('Carregamento registrado com sucesso!');
+      document.querySelector('.form-table').reset();
+      document.getElementById('totalDormentes').value = ''; // Limpa o total de dormentes
+      totalDormentes = 0; // Reseta o total de dormentes
+    }
+  </script>
+</body>
+</html>
